@@ -1,0 +1,81 @@
+{
+    // ==========================================================================
+    // settings.json  –  ตั้งค่า VSCode สำหรับโปรเจค EV Charger
+    // ==========================================================================
+
+    // ------------------------------------------------------------------
+    // C/C++ Extension: เลือก IntelliSense configuration
+    //   ใช้ c_cpp_properties.json โดยตรง เพราะ CMake configureOnOpen ปิดอยู่
+    //   ถ้าใช้ CMake Tools เป็น provider ต้อง configure project ก่อนทุกครั้ง
+    // ------------------------------------------------------------------
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.default.cStandard": "gnu99",
+
+    // แสดง error squiggle เฉพาะที่ตรวจได้จริง
+    "C_Cpp.errorSquiggles": "enabled",
+
+    // ------------------------------------------------------------------
+    // CMake Tools Extension
+    // ------------------------------------------------------------------
+    "cmake.buildDirectory": "${workspaceFolder}/build",
+    "cmake.configureOnOpen": false,     // ไม่ configure อัตโนมัติตอนเปิด
+    "cmake.buildBeforeRun": true,       // build ก่อน run/debug อัตโนมัติ
+    "cmake.parallelJobs": 4,            // build 4 job พร้อมกัน
+
+    // ------------------------------------------------------------------
+    // Editor settings สำหรับ C/Embedded
+    // ------------------------------------------------------------------
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,        // ใช้ space แทน tab
+    "editor.detectIndentation": false,
+    "editor.rulers": [80, 120],         // เส้นแนะนำความยาวบรรทัด
+    "editor.wordWrap": "off",
+
+    // แสดง whitespace (ช่วยตรวจ indent ผสม tab/space)
+    "editor.renderWhitespace": "boundary",
+
+    // ไฮไลต์วงเล็บที่จับคู่กัน
+    "editor.bracketPairColorization.enabled": true,
+
+    // ------------------------------------------------------------------
+    // File association: ให้ VSCode รู้ว่าไฟล์ .h เป็น C ไม่ใช่ C++
+    // ------------------------------------------------------------------
+    "files.associations": {
+        "*.h": "c",
+        "*.c": "c",
+        "ev_charger.h": "c"
+    },
+
+    // ไม่แสดงโฟลเดอร์ build ใน Explorer (ลดความรก)
+    "files.exclude": {
+        "build/": true,
+        "**/.git": true,
+        "**/__pycache__": true
+    },
+
+    // ------------------------------------------------------------------
+    // Terminal: ตั้งค่าให้ใช้ CMD หรือ PowerShell บน Windows
+    // ------------------------------------------------------------------
+    "terminal.integrated.defaultProfile.windows": "Command Prompt",
+    "terminal.integrated.env.windows": {
+        // เพิ่ม XC16 bin เข้า PATH ใน terminal (แก้ version ให้ตรง)
+        "PATH": "C:\\Program Files\\Microchip\\xc16\\v2.10\\bin;${env:PATH}"
+    },
+    "terminal.integrated.env.linux": {
+        "PATH": "/opt/microchip/xc16/v2.10/bin:${env:PATH}"
+    },
+    "terminal.integrated.env.osx": {
+        "PATH": "/opt/microchip/xc16/v2.10/bin:${env:PATH}"
+    },
+
+    // ------------------------------------------------------------------
+    // MPLAB Extension settings
+    // ------------------------------------------------------------------
+    // ซ่อน notification ที่ไม่จำเป็น
+    "mplab.showReleaseNotes": false,
+
+    // ------------------------------------------------------------------
+    // Git: ไม่ track ไฟล์ build
+    // ------------------------------------------------------------------
+    "git.ignoredRepositories": ["build"]
+}

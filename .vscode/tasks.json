@@ -1,0 +1,216 @@
+{
+    // ==========================================================================
+    // tasks.json  –  Build Tasks สำหรับ EV Charger Firmware
+    //
+    // วิธีรัน task:
+    //   Ctrl+Shift+B  → เลือก task ที่ต้องการ
+    //   หรือ Terminal → Run Task → เลือก task
+    //
+    // Tasks ที่มี:
+    //   1. CMake: Configure  – สร้าง build system ครั้งแรก
+    //   2. Build: Debug      – build แบบมี debug symbols
+    //   3. Build: Release    – build แบบ optimize เต็ม (ต้องการ XC16 PRO license)
+    //   4. Clean             – ลบไฟล์ build ทั้งหมด
+    //   5. Program Device    – flash HEX ลง MCU ผ่าน ipecmd
+    // ==========================================================================
+    "version": "2.0.0",
+
+    // ------------------------------------------------------------------
+    // ตัวแปรที่ใช้ร่วมกัน – แก้ให้ตรงกับเครื่องของคุณ
+    // ------------------------------------------------------------------
+    "options": {
+        "env": {
+            // ✏️ แก้ version XC16 ให้ตรง
+            "XC16_BIN":  "/opt/microchip/xc16/v2.10/bin",
+            // ✏️ แก้ path ที่ติดตั้ง IPE (MPLAB IPE สำหรับ programming)
+            "IPE_PATH":  "C:/Program Files/Microchip/MPLABX/v6.25/mplab_ipe/ipecmd.exe",
+            // โฟลเดอร์เก็บผลลัพธ์ build
+            "BUILD_DIR": "${workspaceFolder}/build"
+        }
+    },
+
+    "tasks": [
+        // ==================================================================
+        // TASK 1: CMake Configure
+        //   สร้าง Makefile / Ninja build system ในโฟลเดอร์ build/
+        //   ต้องรันครั้งแรก หรือเมื่อแก้ CMakeLists.txt
+        // ==================================================================
+        {
+            "label": "CMake: Configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S", "${workspaceFolder}",
+                "-B", "${env:BUILD_DIR}",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                // ✏️ แก้ path XC16 ถ้าต่างจาก env.XC16_BIN
+                "-DXC16_PATH=${env:XC16_BIN}",
+                "-G", "Ninja"      // ใช้ Ninja เพราะ build เร็วกว่า Make
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "สร้าง CMake build system ครั้งแรก (รันก่อน Build)"
+        },
+
+        // ==================================================================
+        // TASK 2: Build Debug (default build)
+        //   compile และ link ทุกไฟล์ → สร้าง .elf + .hex
+        //   กด Ctrl+Shift+B เพื่อรัน task นี้
+        // ==================================================================
+        {
+            "label": "Build: Debug",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build", "${env:BUILD_DIR}",
+                "--config", "Debug",
+                "--parallel"    // build หลาย core พร้อมกัน
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true   // Ctrl+Shift+B จะรัน task นี้
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": false      // ไม่ clear terminal (เก็บ log เก่าไว้)
+            },
+            "problemMatcher": {
+                // Parse error จาก xc16-gcc ให้แสดงใน Problems panel
+                "owner": "xc16",
+                "fileLocation": ["relative", "${workspaceFolder}"],
+                "pattern": {
+                    "regexp": "^(.+):(\\d+):(\\d+):\\s+(warning|error):\\s+(.+)$",
+                    "file": 1,
+                    "line": 2,
+                    "column": 3,
+                    "severity": 4,
+                    "message": 5
+                }
+            },
+            "dependsOn": [],
+            "detail": "Build firmware พร้อม debug symbols (Ctrl+Shift+B)"
+        },
+
+        // ==================================================================
+        // TASK 3: Build Release
+        //   ต้องการ XC16 PRO หรือ Standard license สำหรับ -O2/-Os
+        //   Free license รองรับเฉพาะ -O0 และ -O1
+        // ==================================================================
+        {
+            "label": "Build: Release",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build", "${env:BUILD_DIR}",
+                "--config", "Release",
+                "--parallel"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared",
+                "clear": true
+            },
+            "problemMatcher": "$gcc",
+            "detail": "Build firmware แบบ optimized (ต้องการ XC16 Standard/PRO license)"
+        },
+
+        // ==================================================================
+        // TASK 4: Clean
+        //   ลบ build artifacts ทั้งหมด เพื่อ rebuild ใหม่ตั้งแต่ต้น
+        // ==================================================================
+        {
+            "label": "Clean",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build", "${env:BUILD_DIR}",
+                "--target", "clean"
+            ],
+            "group": "build",
+            "presentation": {
+                "reveal": "always",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
+            "detail": "ลบไฟล์ build ทั้งหมด"
+        },
+
+        // ==================================================================
+        // TASK 5: Configure + Build (รวมทั้ง 2 ขั้นตอนในครั้งเดียว)
+        //   สะดวกสำหรับใช้ครั้งแรก หรือหลังจาก clean
+        // ==================================================================
+        {
+            "label": "Configure + Build",
+            "dependsOrder": "sequence",
+            "dependsOn": [
+                "CMake: Configure",
+                "Build: Debug"
+            ],
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "Configure CMake แล้ว Build ทันที (สำหรับใช้ครั้งแรก)"
+        },
+
+        // ==================================================================
+        // TASK 6: Program Device
+        //   Flash HEX file ลง PIC24FJ128GA106 ผ่าน MPLAB IPE
+        //   ต้องต่อ programmer (PICkit 4, SNAP, ICD4 ฯลฯ) ก่อน
+        //
+        //   Argument:
+        //     -TPPK4     = PICkit 4  (เปลี่ยนเป็น -TPPK5, -TPSNAP ตามเครื่อง)
+        //     -P24FJ128GA106 = device
+        //     -F...      = HEX file
+        //     -M         = program (erase + write + verify)
+        //     -OL        = release device หลัง program
+        // ==================================================================
+        {
+            "label": "Program Device (PICkit 4)",
+            "type": "shell",
+            "command": "${env:IPE_PATH}",
+            "args": [
+                "-TPPK4",
+                "-P24FJ128GA106",
+                "-F${env:BUILD_DIR}/ev_charger_diprom.hex",
+                "-M",
+                "-OL"
+            ],
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "clear": true
+            },
+            "problemMatcher": [],
+            "detail": "Flash HEX ลง MCU ผ่าน PICkit 4 (ต้องต่อ programmer ก่อน)"
+        },
+
+        // ==================================================================
+        // TASK 7: Open Serial Monitor
+        //   เปิด terminal สำหรับดู UART output
+        //   ✏️ แก้ COM port ให้ตรงกับเครื่อง (COM3, COM5, /dev/ttyUSB0 ฯลฯ)
+        // ==================================================================
+        {
+            "label": "Serial Monitor (9600 baud)",
+            "type": "shell",
+            "command": "python",
+            "args": [
+                "-c",
+                "import serial,sys; s=serial.Serial('COM3',9600); [print(s.readline().decode('utf-8','replace'),end='') for _ in iter(int,1)]"
+            ],
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": [],
+            "detail": "ดู UART1 output จาก Nextion interface (ต้องติดตั้ง pyserial: pip install pyserial)"
+        }
+    ]
+}

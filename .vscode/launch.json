@@ -1,0 +1,122 @@
+{
+    // ==========================================================================
+    // launch.json  –  Debug Configuration สำหรับ EV Charger Firmware
+    //
+    // ใช้ร่วมกับ MPLAB Debug Adapter Extension (Microchip.mplab-core-da)
+    // รองรับ programmer/debugger:
+    //   - PICkit 4   (แนะนำ)
+    //   - PICkit 5
+    //   - MPLAB SNAP
+    //   - ICD 4 / ICD 5
+    //   - ICE 4
+    //
+    // วิธีเริ่ม Debug:
+    //   F5 หรือ Run → Start Debugging
+    // ==========================================================================
+    "version": "0.2.0",
+    "configurations": [
+        {
+            // ------------------------------------------------------------------
+            // Configuration 1: Debug ผ่าน PICkit 4 (แนะนำ)
+            // ------------------------------------------------------------------
+            "name": "Debug – PICkit 4",
+            "type": "cppdbg",
+
+            // preLaunchTask: build ก่อน debug อัตโนมัติ
+            "preLaunchTask": "Build: Debug",
+
+            "request": "launch",
+
+            // ไฟล์ ELF ที่ build ได้ (ต้องตรงกับ project name ใน CMakeLists.txt)
+            "program": "${workspaceFolder}/build/ev_charger_diprom",
+
+            "args": [],
+            "stopAtEntry": true,    // หยุดที่ main() ทันทีเมื่อเริ่ม debug
+
+            "cwd": "${workspaceFolder}",
+
+            // ใช้ MPLAB Debug Adapter
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:/Program Files/Microchip/xc16/v2.10/bin/xc16-gdb.exe",
+
+            "miDebuggerServerAddress": "localhost:3333",
+
+            // Debug server: MPLAB Debug Adapter จะเปิด GDB server ให้อัตโนมัติ
+            "debugServerPath": "${env:ProgramFiles}/Microchip/MPLABX/v6.25/mplab_ide/bin/mdb.bat",
+            "debugServerArgs": "debug",
+
+            // Setup commands สำหรับ GDB
+            "setupCommands": [
+                {
+                    "description": "เปิด pretty-print สำหรับ struct",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "description": "ตั้งค่า target MCU",
+                    "text": "target extended-remote localhost:3333",
+                    "ignoreFailures": false
+                }
+            ],
+
+            // Source file mapping (ถ้า path ไม่ตรง)
+            "sourceFileMap": {
+                "${workspaceFolder}/src": "${workspaceFolder}/src"
+            },
+
+            "externalConsole": false,
+            "internalConsoleOptions": "openOnSessionStart",
+
+            "logging": {
+                "engineLogging": false,
+                "trace": false
+            }
+        },
+
+        // ------------------------------------------------------------------
+        // Configuration 2: Debug ผ่าน MPLAB Extension (แนะนำสุด)
+        //   ใช้ MPLAB Debug Adapter โดยตรง (extension Microchip.mplab-core-da)
+        //   ไม่ต้องตั้งค่า GDB server เอง
+        // ------------------------------------------------------------------
+        {
+            "name": "Debug – MPLAB Adapter (PICkit 4)",
+            "type": "mplab-core-da",      // ชนิดนี้มาจาก Extension MPLAB
+            "request": "launch",
+
+            "preLaunchTask": "Build: Debug",
+
+            // ✏️ เลือก tool ที่มี: "PICkit4", "PICkit5", "SNAP", "ICD4", "ICD5"
+            "tool": "PICkit4",
+
+            // ✏️ เลือก MCU
+            "device": "PIC24FJ128GA106",
+
+            // ไฟล์ที่ต้องการ flash และ debug
+            "filePath": "${workspaceFolder}/build/ev_charger_diprom",
+
+            "stopAtEntry": true,
+            "internalConsoleOptions": "openOnSessionStart",
+
+            "logging": {
+                "logToFile": false
+            }
+        },
+
+        // ------------------------------------------------------------------
+        // Configuration 3: Attach (ต่อเข้า MCU ที่รันอยู่แล้ว)
+        //   ไม่ flash ใหม่ แค่หยุดและ debug โปรแกรมที่รันอยู่
+        // ------------------------------------------------------------------
+        {
+            "name": "Debug – Attach (ไม่ flash ใหม่)",
+            "type": "mplab-core-da",
+            "request": "attach",     // attach ≠ launch
+
+            "tool": "PICkit4",
+            "device": "PIC24FJ128GA106",
+
+            "filePath": "${workspaceFolder}/build/ev_charger_diprom",
+
+            "internalConsoleOptions": "openOnSessionStart"
+        }
+    ]
+}

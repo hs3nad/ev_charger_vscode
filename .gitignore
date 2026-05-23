@@ -1,0 +1,48 @@
+# ====================================================================
+# .gitignore  –  EV Charger Firmware Project
+# ====================================================================
+
+# ---- Build output ----
+build/
+dist/
+*.elf
+*.hex
+*.map
+*.lst
+*.dis
+*.o
+*.a
+*.d
+
+# ---- CMake ----
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+_deps/
+
+# ---- MPLAB X / XC16 ----
+nbproject/private/
+nbbuild/
+nbdist/
+.nb-gradle/
+*.mplabws
+
+# ---- VSCode ----
+# ไม่ ignore .vscode/ เพราะต้องการ share config กับทีม
+# .vscode/
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Editor temp files ----
+*.swp
+*.swo
+*~
+*.bak
+
+# ---- Python (สำหรับ serial monitor script) ----
+__pycache__/
+*.pyc

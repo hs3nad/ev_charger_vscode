@@ -1,0 +1,117 @@
+{
+    // ==========================================================================
+    // c_cpp_properties.json  –  ตั้งค่า IntelliSense สำหรับ XC16 / PIC24
+    //
+    // ไฟล์นี้บอก VSCode C/C++ Extension ว่าจะหา header และ define อะไรบ้าง
+    // เพื่อให้ IntelliSense ทำงานได้ถูกต้องกับ Microchip XC16 compiler
+    //
+    // ⚠️  แก้ "xc16InstallPath" ให้ตรงกับ path ที่ติดตั้ง XC16 จริงในเครื่องคุณ
+    // ==========================================================================
+    "configurations": [
+        {
+            "name": "XC16 – Linux/macOS",
+
+            // ------------------------------------------------------------------
+            // Path ของ XC16 compiler
+            //   Windows : "C:/Program Files/Microchip/xc16/v2.10/bin/xc16-gcc.exe"
+            //   macOS   : "/opt/microchip/xc16/v2.10/bin/xc16-gcc"
+            //   Linux   : "/opt/microchip/xc16/v2.10/bin/xc16-gcc"
+            //
+            //   ✏️  แก้ตาม version XC16 ที่ติดตั้ง (v2.10, v2.00, v1.70 ฯลฯ)
+            // ------------------------------------------------------------------
+            "compilerPath": "/opt/microchip/xc16/v2.10/bin/xc16-gcc",
+
+            "compilerArgs": [
+                "-mcpu=24FJ128GA106"
+            ],
+
+            // ------------------------------------------------------------------
+            // Include paths
+            //   **  = ค้นหา recursive (ทุก subfolder)
+            //   ✏️  แก้ version ใน path ให้ตรงกับ XC16 ที่ติดตั้ง
+            // ------------------------------------------------------------------
+            "includePath": [
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/src/**",
+                "/opt/microchip/xc16/v2.10/support/PIC24F/h/**",
+                "/opt/microchip/xc16/v2.10/support/generic/h/**",
+                "/opt/microchip/xc16/v2.10/include/**"
+            ],
+
+            // ------------------------------------------------------------------
+            // Preprocessor defines ที่ XC16 กำหนดให้อัตโนมัติ
+            //   ต้องประกาศที่นี่ด้วยเพื่อให้ IntelliSense เข้าใจโค้ดถูกต้อง
+            // ------------------------------------------------------------------
+            "defines": [
+                "__PIC24FJ128GA106__",      // device-specific define จาก XC16
+                "__PIC24F__",               // family define
+                "__XC16__",                 // compiler identify
+                "__C30__",                  // legacy define (XC16 ยังส่งมา)
+                "MCU_VARIANT=1",            // เลือก GA106 (ดู ev_charger.h)
+                "_XTAL_FREQ=32000000UL",    // ความถี่ 32 MHz สำหรับ macro delay
+                "__prog__="                 // XC16 program-space keyword สำหรับ IntelliSense
+            ],
+
+            // ------------------------------------------------------------------
+            // C standard
+            //   XC16 รองรับ gnu99 (C99 + GNU extensions)
+            // ------------------------------------------------------------------
+            "cStandard": "gnu99",
+            "cppStandard": "gnu++14",
+
+            // ------------------------------------------------------------------
+            // ใช้ compilerPath ในการตรวจ IntelliSense
+            // ------------------------------------------------------------------
+            "intelliSenseMode": "gcc-x64",
+
+            // ------------------------------------------------------------------
+            // ระบุไม่ให้ขีดเส้นใต้แดงที่ keyword เฉพาะของ XC16
+            //   เช่น __attribute__, __interrupt__, __psv__
+            // ------------------------------------------------------------------
+            "forcedInclude": [],
+
+            // ------------------------------------------------------------------
+            // บอก IntelliSense ว่า path ด้านบนเป็นแบบ recursive
+            // ------------------------------------------------------------------
+            "browse": {
+                "path": [
+                    "${workspaceFolder}",
+                    "/opt/microchip/xc16/v2.10/support/PIC24F/h",
+                    "/opt/microchip/xc16/v2.10/support/generic/h",
+                    "/opt/microchip/xc16/v2.10/include"
+                ],
+                "limitSymbolsToIncludedHeaders": true
+            }
+        },
+
+        // ----------------------------------------------------------------------
+        // Config สำรองสำหรับ Windows
+        // ----------------------------------------------------------------------
+        {
+            "name": "XC16 – Windows",
+            "compilerPath": "C:/Program Files/Microchip/xc16/v2.10/bin/xc16-gcc.exe",
+            "compilerArgs": ["-mcpu=24FJ128GA106"],
+            "includePath": [
+                "${workspaceFolder}/include/**",
+                "${workspaceFolder}/src/**",
+                "C:/Program Files/Microchip/xc16/v2.10/support/PIC24F/h/**",
+                "C:/Program Files/Microchip/xc16/v2.10/support/generic/h/**",
+                "C:/Program Files/Microchip/xc16/v2.10/include/**"
+            ],
+            "defines": [
+                "__PIC24FJ128GA106__",
+                "__PIC24F__",
+                "__XC16__",
+                "__C30__",
+                "MCU_VARIANT=1",
+                "_XTAL_FREQ=32000000UL",
+                "__prog__="
+            ],
+            "cStandard": "gnu99",
+            "intelliSenseMode": "gcc-x64"
+        }
+    ],
+
+    // เวอร์ชัน format ของไฟล์นี้ (อย่าเปลี่ยน)
+    "version": 4
+}

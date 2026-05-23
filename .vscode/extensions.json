@@ -1,0 +1,71 @@
+{
+    // ==========================================================================
+    // extensions.json  –  Extension ที่แนะนำสำหรับโปรเจคนี้
+    //
+    // เมื่อเปิดโปรเจคใน VSCode จะมี popup ถามว่าต้องการติดตั้งหรือไม่
+    // ==========================================================================
+    "recommendations": [
+        // ------------------------------------------------------------------
+        // จำเป็นต้องมี (REQUIRED)
+        // ------------------------------------------------------------------
+
+        // MPLAB Extension Pack – ครอบคลุมทุก extension ของ Microchip
+        // รวม: build, debug, IntelliSense, programmer support
+        "Microchip.mplab-extension-pack",
+
+        // C/C++ Extension – IntelliSense, go-to-definition, error highlight
+        "ms-vscode.cpptools",
+
+        // CMake Tools – build system integration
+        "ms-vscode.cmake-tools",
+
+        // CMake syntax highlight
+        "twxs.cmake",
+
+        // ------------------------------------------------------------------
+        // แนะนำให้มี (RECOMMENDED)
+        // ------------------------------------------------------------------
+
+        // Hex Editor – เปิดไฟล์ .hex ที่ build ได้ดูได้
+        "ms-vscode.hexeditor",
+
+        // Serial Monitor – ดู UART output ในตัว VSCode
+        // รองรับ COM port และ /dev/tty
+        "ms-vscode.serial-monitor",
+
+        // GitLens – ดู git history ได้ดีขึ้น
+        "eamodio.gitlens",
+
+        // Indent Rainbow – ไฮไลต์ indent level ด้วยสี (อ่านง่ายขึ้น)
+        "oderwat.indent-rainbow",
+
+        // Bracket Pair Colorizer – ไฮไลต์วงเล็บที่จับคู่กัน
+        // (built-in ใน VSCode ใหม่แล้ว แต่ใส่ไว้สำหรับ version เก่า)
+        "CoenraadS.bracket-pair-colorizer-2",
+
+        // TODO Highlight – ไฮไลต์ TODO: FIXME: NOTE: ใน comment
+        "wayou.vscode-todo-highlight",
+
+        // ------------------------------------------------------------------
+        // ทางเลือก (OPTIONAL)
+        // ------------------------------------------------------------------
+
+        // MPLAB AI Coding Assistant – AI ที่รู้จัก Microchip product
+        "Microchip.mplab-ai-coding-assistant",
+
+        // MPLAB Data Visualizer – ดู variable runtime เป็น graph
+        "Microchip.mplab-data-visualizer",
+
+        // Error Lens – แสดง error/warning inline ในโค้ด (ไม่ต้องดู Problems panel)
+        "usernamehw.errorlens"
+    ],
+
+    // Extension ที่ไม่ควรใช้ร่วมกับโปรเจคนี้
+    "unwantedRecommendations": [
+        // Arduino extension จะ conflict กับ C/C++ config ของเรา
+        "vsciot-vscode.vscode-arduino",
+
+        // PlatformIO ไม่รองรับ PIC MCU
+        "platformio.platformio-ide"
+    ]
+}
