@@ -65,7 +65,5 @@
         // Arduino extension จะ conflict กับ C/C++ config ของเรา
         "vsciot-vscode.vscode-arduino",
 
-        // PlatformIO ไม่รองรับ PIC MCU
-        "platformio.platformio-ide"
     ]
 }
